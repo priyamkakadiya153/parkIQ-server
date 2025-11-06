@@ -29,7 +29,6 @@ header {
   top: 0;
 }
 
-/* UPDATED: Use flex for alignment */
 header h1 {
   display: flex;
   justify-content: center;
@@ -39,7 +38,6 @@ header h1 {
   color: white; 
 }
 
-/* NEW: Apply glow only to the span (the text) */
 header h1 span {
   text-shadow: 
     0 0 5px rgba(255, 255, 255, 0.7),
@@ -47,13 +45,19 @@ header h1 span {
     0 0 20px rgba(255, 255, 255, 0.3),
     0 0 30px rgba(255, 255, 255, 0.1);
 }
-
-/* NEW: Style for the header logo image */
+/* NEW: Style for the date display */
+.date-display {
+  font-size: 1rem;  /* 16px size */
+  color: white;
+  font-weight: 400;
+  opacity: 0.7;     /* Makes it more subtle than the title */
+  margin-top: 4px;  /* Adds a little space below the glowing title */
+  letter-spacing: 0.5px;
+}
 .header-logo {
-  width: 50px; /* Adjust size as needed */
+  width: 50px;
   height: auto;
   margin-right: 15px;
-  /* Adds a subtle shadow to the car */
   filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
@@ -96,13 +100,12 @@ main {
 }
 .available {
   border: 2px solid #22c55e;
-  transition: border-color 0.3s, color 0.3s; /* Added transition */
+  transition: border-color 0.3s, color 0.3s;
 }
 .occupied {
   border: 2px solid #ef4444;
 }
 
-/* --- LOG PANEL --- */
 .log-container {
   width: 90%;
   max-width: 1000px;
@@ -143,7 +146,6 @@ footer {
   opacity: 0.7;
 }
 
-/* --- PRELOADER --- */
 #preloader {
   position: fixed;
   top: 0;
@@ -171,11 +173,15 @@ footer {
   /* This parent is empty, we style the image */
 }
 
+/* --- THIS IS THE UPDATED SECTION --- */
+
 .preloader-car img {
-  width: 175px; /* <--- YOU CAN CHANGE THIS SIZE */
+  width: 175px; /* You can still change this size */
   height: auto;
-  /* UPDATED: Using the new 'driveLeft' animation */
-  animation: driveLeft 1.2s infinite ease-in-out;
+  /* UPDATED: New animation 'driveOff' */
+  /* Runs 1 time, takes 1.5s, stays at end state, starts after 0.5s */
+  animation: driveOff 1.5s ease-in forwards;
+  animation-delay: 0.5s; 
 }
 
 #preloader p {
@@ -184,20 +190,21 @@ footer {
   opacity: 0.8;
 }
 
-/* UPDATED: This animation now goes from middle (0) to left (-30px) */
-@keyframes driveLeft {
+/* UPDATED: This animation moves the car completely off-screen */
+@keyframes driveOff {
   0% {
     transform: translateX(0); /* Start in the middle */
-  }
-  50% {
-    transform: translateX(-30px); /* Move 30px to the left */
+    opacity: 1;
   }
   100% {
-    transform: translateX(0); /* Return to the middle */
+    transform: translateX(-120vw); /* Move completely off-screen to the left */
+    opacity: 0;
   }
 }
 
-/* --- GATE STATUS --- */
+/* --- END OF UPDATED SECTION --- */
+
+
 .status-panel {
   width: 90%;
   max-width: 1000px;
@@ -212,7 +219,7 @@ footer {
   padding: 0.75rem 1.5rem;
   background: rgba(255, 255, 255, 0.1);
   backdrop-filter: blur(15px);
-  border-radius: 50px; /* Pill shape */
+  border-radius: 50px;
   font-size: 1.1rem;
   font-weight: 600;
   transition: all 0.3s ease;
@@ -233,7 +240,7 @@ footer {
   color: #fecaca;
 }
 #gate-status-indicator.closed .status-light {
-  background-color: #ef4444; /* Red */
+  background-color: #ef4444;
   box-shadow: 0 0 10px #ef4444;
 }
 
@@ -242,15 +249,13 @@ footer {
   color: #a7f3d0;
 }
 #gate-status-indicator.open .status-light {
-  background-color: #22c55e; /* Green */
+  background-color: #22c55e;
   box-shadow: 0 0 10px #22c55e;
 }
 
-/* --- 'FULL' INDICATOR --- */
 .card.available.full {
   border-color: #ff0044;
   color: #ffbdcd;
-  /* Apply our pulse animation */
   animation: pulse 1s infinite;
 }
 
@@ -267,5 +272,58 @@ footer {
   }
   100% {
     box-shadow: 0 0 10px rgba(255, 0, 68, 0.5), 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+}
+/* --- MOBILE RESPONSIVE STYLES --- */
+/* This code will ONLY apply to screens 600px wide or smaller */
+
+@media (max-width: 600px) {
+
+  body {
+    /* Reduce top/bottom padding to fit more on the screen */
+    padding: 80px 10px 60px 10px;
+  }
+
+  header h1 {
+    /* Make the main title smaller */
+    font-size: 1.5rem;
+  }
+
+  .header-logo {
+    /* Make the car icon in the header smaller */
+    width: 40px;
+  }
+
+  main {
+    /* Reduce the gap between cards */
+    gap: 1.5rem;
+  }
+
+  .card {
+    /* This is the most important part! */
+    width: 100%; /* Make cards stack vertically */
+    height: auto; /* Let height be automatic */
+    min-height: 120px;
+    padding: 1rem;
+  }
+
+  .card h2 {
+    font-size: 1.1rem;
+  }
+
+  .card p {
+    /* Make the big numbers smaller */
+    font-size: 2.2rem;
+  }
+
+  .log-container {
+    /* Reduce space above the log */
+    margin-top: 2rem;
+    padding: 1.5rem;
+  }
+
+  .log-container h2 {
+    font-size: 1.4rem;
+    margin-bottom: 1rem;
   }
 }
