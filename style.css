@@ -32,6 +32,15 @@ header {
 header h1 {
   font-size: 2rem;
   letter-spacing: 1px;
+  color: white; /* Ensure text color is white for the glow */
+  
+  /* --- NEW: GLOWING TEXT EFFECT --- */
+  /* Multiple text-shadows to create a soft, wide glow */
+  text-shadow: 
+    0 0 5px rgba(255, 255, 255, 0.7), /* Inner, brighter glow */
+    0 0 10px rgba(255, 255, 255, 0.5), /* Medium glow */
+    0 0 20px rgba(255, 255, 255, 0.3), /* Wider, softer glow */
+    0 0 30px rgba(255, 255, 255, 0.1); /* Faintest, widest glow */
 }
 
 main {
@@ -168,4 +177,54 @@ footer {
   100% {
     transform: translateX(-15px);
   }
+}
+/* --- NEW: Gate Status Panel --- */
+.status-panel {
+  width: 90%;
+  max-width: 1000px;
+  margin-top: 2rem;
+  display: flex;
+  justify-content: center;
+}
+
+#gate-status-indicator {
+  display: flex;
+  align-items: center;
+  padding: 0.75rem 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 50px; /* Pill shape */
+  font-size: 1.1rem;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.status-light {
+  width: 12px;
+  height: 12px;
+  border-radius: 50%;
+  margin-right: 0.75rem;
+  background-color: #9ca3af; /* Default gray */
+  transition: all 0.3s ease;
+}
+
+/* Gate Status: Closed */
+#gate-status-indicator.closed {
+  border-color: #ef4444;
+  color: #fecaca;
+}
+#gate-status-indicator.closed .status-light {
+  background-color: #ef4444; /* Red */
+  box-shadow: 0 0 10px #ef4444;
+}
+
+/* Gate Status: Open */
+#gate-status-indicator.open {
+  border-color: #22c55e;
+  color: #a7f3d0;
+}
+#gate-status-indicator.open .status-light {
+  background-color: #22c55e; /* Green */
+  box-shadow: 0 0 10px #22c55e;
 }

@@ -3,17 +3,16 @@ const http = require("http");
 const { WebSocketServer } = require("ws");
 const cors = require("cors");
 const path = require("path");
-const fs = require("fs"); // <--- NEW
+const fs = require("fs");
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-// --- Database (In-Memory with Persistence) ---
+// --- Database (Persistence) ---
 const TOTAL_SLOTS = 5;
-const DATA_FILE = path.join(__dirname, 'parkingData.json'); // <--- NEW
+const DATA_FILE = path.join(__dirname, 'parkingData.json');
 
-// <--- NEW: Function to read the current count from the file
 function loadCount() {
   try {
     if (fs.existsSync(DATA_FILE)) {
@@ -28,13 +27,11 @@ function loadCount() {
     }
   } catch (err) {
     console.error('Error reading data file, resetting to 0:', err);
-    // If file is corrupt, reset it
     fs.writeFileSync(DATA_FILE, JSON.stringify({ occupiedSlots: 0 }), 'utf8');
     return 0;
   }
 }
 
-// <--- NEW: Function to save the current count to the file
 function saveCount(count) {
   try {
     const data = JSON.stringify({ occupiedSlots: count });
@@ -45,7 +42,8 @@ function saveCount(count) {
   }
 }
 
-let occupiedSlots = loadCount(); // <--- UPDATED
+let occupiedSlots = loadCount();
+let gateStatus = "closed"; // <--- NEW: In-memory variable for gate status
 
 // --- HTTP Server & WebSocket Server Setup ---
 const server = http.createServer(app);
@@ -58,9 +56,12 @@ function broadcastData() {
     total: TOTAL_SLOTS,
     occupied: occupiedSlots,
     available: availableSlots,
+    gate: gateStatus // <--- NEW: Add gate status to broadcast
   };
+  
   const jsonData = JSON.stringify(data);
   console.log("Broadcasting:", jsonData);
+  
   wss.clients.forEach((client) => {
     if (client.readyState === client.OPEN) {
       client.send(jsonData);
@@ -75,11 +76,11 @@ app.get("/", (req, res) => {
   res.sendFile(path.join(__dirname, "index.html"));
 });
 
-// --- API for Your IoT Device ---
+// --- API for Parking Count ---
 app.post("/api/increment", (req, res) => {
   if (occupiedSlots < TOTAL_SLOTS) {
     occupiedSlots++;
-    saveCount(occupiedSlots); // <--- NEW
+    saveCount(occupiedSlots);
     const data = broadcastData();
     res.json({ success: true, ...data });
   } else {
@@ -90,7 +91,7 @@ app.post("/api/increment", (req, res) => {
 app.post("/api/decrement", (req, res) => {
   if (occupiedSlots > 0) {
     occupiedSlots--;
-    saveCount(occupiedSlots); // <--- NEW
+    saveCount(occupiedSlots);
     const data = broadcastData();
     res.json({ success: true, ...data });
   } else {
@@ -98,35 +99,51 @@ app.post("/api/decrement", (req, res) => {
   }
 });
 
-// <--- NEW: TEMPORARY TEST ROUTES ---
-// You can remove these when your project is live
+// <--- NEW: API for Gate Status ---
+app.post("/api/gate/open", (req, res) => {
+  gateStatus = "open";
+  const data = broadcastData();
+  console.log("Gate status changed to OPEN");
+  res.json({ success: true, ...data });
+});
+
+app.post("/api/gate/close", (req, res) => {
+  gateStatus = "closed";
+  const data = broadcastData();
+  console.log("Gate status changed to CLOSED");
+  res.json({ success: true, ...data });
+});
+
+
+// --- TEST ROUTES (Count) ---
 app.get("/test/increment", (req, res) => {
-  if (occupiedSlots < TOTAL_SLOTS) {
-    occupiedSlots++;
-    saveCount(occupiedSlots);
-    broadcastData();
-    res.send(`Incremented. Count is now ${occupiedSlots}. <a href="/">Back to Dashboard</a>`);
-  } else {
-    res.send(`Parking is full. <a href="/">Back to Dashboard</a>`);
-  }
+  if (occupiedSlots < TOTAL_SLOTS) { occupiedSlots++; saveCount(occupiedSlots); }
+  broadcastData();
+  res.send(`Incremented. Count is ${occupiedSlots}. <a href="/">Back</a>`);
 });
 
 app.get("/test/decrement", (req, res) => {
-    if (occupiedSlots > 0) {
-    occupiedSlots--;
-    saveCount(occupiedSlots);
-    broadcastData();
-    res.send(`Decremented. Count is now ${occupiedSlots}. <a href="/">Back to Dashboard</a>`);
-  } else {
-    res.send(`Parking is empty. <a href="/">Back to Dashboard</a>`);
-  }
+  if (occupiedSlots > 0) { occupiedSlots--; saveCount(occupiedSlots); }
+  broadcastData();
+  res.send(`Decremented. Count is ${occupiedSlots}. <a href="/">Back</a>`);
 });
-// <--- END OF TEST ROUTES ---
+
+// <--- NEW: TEST ROUTES (Gate) ---
+app.get("/test/gate/open", (req, res) => {
+  gateStatus = "open";
+  broadcastData();
+  res.send(`Gate is OPEN. <a href="/">Back</a>`);
+});
+app.get("/test/gate/close", (req, res) => {
+  gateStatus = "closed";
+  broadcastData();
+  res.send(`Gate is CLOSED. <a href="/">Back</a>`);
+});
 
 // --- WebSocket Connection Handling ---
 wss.on("connection", (ws) => {
   console.log("Client connected to WebSocket");
-  broadcastData();
+  broadcastData(); // Send current status immediately
   ws.on("close", () => {
     console.log("Client disconnected");
   });
