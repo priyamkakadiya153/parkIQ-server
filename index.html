@@ -9,12 +9,17 @@
 <body>
   
   <div id="preloader">
-    <div class="preloader-car">🚘</div>
+    <div class="preloader-car">
+      <img src="car.png" alt="Loading Car...">
+    </div>
     <p>Connecting to ParkIQ...</p>
   </div>
 
   <header>
-    <h1>🚘 ParkIQ Smart Parking</h1>
+    <h1>
+      <img src="car.png" alt="Car" class="header-logo">
+      <span>ParkIQ Smart Parking</span>
+    </h1>
   </header>
 
   <main>
@@ -22,7 +27,7 @@
       <h2>Total Slots</h2>
       <p id="total">--</p>
     </div>
-    <div class="card available">
+    <div class="card available" id="available-card">
       <h2>Available</h2>
       <p id="available">--</p>
     </div>
@@ -46,7 +51,7 @@
   </section>
 
   <footer>
-    <p>Made with  by Priyam | ParkIQ - 24/7 Smart Parking</p>
+    <p>Made with ❤️ by Priyam | ParkIQ - 24/7 Smart Parking</p>
   </footer>
 
   <script src="script.js"></script>

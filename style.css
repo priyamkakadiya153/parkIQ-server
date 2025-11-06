@@ -16,7 +16,7 @@ body {
   justify-content: center;
   min-height: 100vh;
   text-align: center;
-  padding: 100px 20px 80px 20px; /* Added top padding */
+  padding: 100px 20px 80px 20px;
 }
 
 header {
@@ -29,18 +29,32 @@ header {
   top: 0;
 }
 
+/* UPDATED: Use flex for alignment */
 header h1 {
+  display: flex;
+  justify-content: center;
+  align-items: center;
   font-size: 2rem;
   letter-spacing: 1px;
-  color: white; /* Ensure text color is white for the glow */
-  
-  /* --- NEW: GLOWING TEXT EFFECT --- */
-  /* Multiple text-shadows to create a soft, wide glow */
+  color: white; 
+}
+
+/* NEW: Apply glow only to the span (the text) */
+header h1 span {
   text-shadow: 
-    0 0 5px rgba(255, 255, 255, 0.7), /* Inner, brighter glow */
-    0 0 10px rgba(255, 255, 255, 0.5), /* Medium glow */
-    0 0 20px rgba(255, 255, 255, 0.3), /* Wider, softer glow */
-    0 0 30px rgba(255, 255, 255, 0.1); /* Faintest, widest glow */
+    0 0 5px rgba(255, 255, 255, 0.7),
+    0 0 10px rgba(255, 255, 255, 0.5),
+    0 0 20px rgba(255, 255, 255, 0.3),
+    0 0 30px rgba(255, 255, 255, 0.1);
+}
+
+/* NEW: Style for the header logo image */
+.header-logo {
+  width: 50px; /* Adjust size as needed */
+  height: auto;
+  margin-right: 15px;
+  /* Adds a subtle shadow to the car */
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 main {
@@ -82,12 +96,13 @@ main {
 }
 .available {
   border: 2px solid #22c55e;
+  transition: border-color 0.3s, color 0.3s; /* Added transition */
 }
 .occupied {
   border: 2px solid #ef4444;
 }
 
-/* --- NEW STYLES FOR LOG PANEL --- */
+/* --- LOG PANEL --- */
 .log-container {
   width: 90%;
   max-width: 1000px;
@@ -117,7 +132,6 @@ main {
 }
 
 #status-log-list li:first-child {
-  /* Highlight the newest entry */
   background: rgba(59, 130, 246, 0.2);
   color: #bfdbfe;
 }
@@ -128,8 +142,8 @@ footer {
   font-size: 0.9rem;
   opacity: 0.7;
 }
-/* --- NEW PRELOADER STYLES --- */
 
+/* --- PRELOADER --- */
 #preloader {
   position: fixed;
   top: 0;
@@ -145,7 +159,6 @@ footer {
   color: white;
   opacity: 1;
   visibility: visible;
-  /* This transition is for the fade-out */
   transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
 }
 
@@ -155,9 +168,14 @@ footer {
 }
 
 .preloader-car {
-  font-size: 4rem;
-  /* This runs our new animation */
-  animation: drive 1.2s infinite ease-in-out;
+  /* This parent is empty, we style the image */
+}
+
+.preloader-car img {
+  width: 175px; /* <--- YOU CAN CHANGE THIS SIZE */
+  height: auto;
+  /* UPDATED: Using the new 'driveLeft' animation */
+  animation: driveLeft 1.2s infinite ease-in-out;
 }
 
 #preloader p {
@@ -166,19 +184,20 @@ footer {
   opacity: 0.8;
 }
 
-/* This is the animation for the car */
-@keyframes drive {
+/* UPDATED: This animation now goes from middle (0) to left (-30px) */
+@keyframes driveLeft {
   0% {
-    transform: translateX(-15px);
+    transform: translateX(0); /* Start in the middle */
   }
   50% {
-    transform: translateX(15px) translateY(-3px);
+    transform: translateX(-30px); /* Move 30px to the left */
   }
   100% {
-    transform: translateX(-15px);
+    transform: translateX(0); /* Return to the middle */
   }
 }
-/* --- NEW: Gate Status Panel --- */
+
+/* --- GATE STATUS --- */
 .status-panel {
   width: 90%;
   max-width: 1000px;
@@ -205,11 +224,10 @@ footer {
   height: 12px;
   border-radius: 50%;
   margin-right: 0.75rem;
-  background-color: #9ca3af; /* Default gray */
+  background-color: #9ca3af;
   transition: all 0.3s ease;
 }
 
-/* Gate Status: Closed */
 #gate-status-indicator.closed {
   border-color: #ef4444;
   color: #fecaca;
@@ -219,7 +237,6 @@ footer {
   box-shadow: 0 0 10px #ef4444;
 }
 
-/* Gate Status: Open */
 #gate-status-indicator.open {
   border-color: #22c55e;
   color: #a7f3d0;
@@ -227,4 +244,28 @@ footer {
 #gate-status-indicator.open .status-light {
   background-color: #22c55e; /* Green */
   box-shadow: 0 0 10px #22c55e;
+}
+
+/* --- 'FULL' INDICATOR --- */
+.card.available.full {
+  border-color: #ff0044;
+  color: #ffbdcd;
+  /* Apply our pulse animation */
+  animation: pulse 1s infinite;
+}
+
+.card.available.full p {
+  color: #ffbdcd;
+}
+
+@keyframes pulse {
+  0% {
+    box-shadow: 0 0 10px rgba(255, 0, 68, 0.5), 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  50% {
+    box-shadow: 0 0 20px rgba(255, 0, 68, 1), 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
+  100% {
+    box-shadow: 0 0 10px rgba(255, 0, 68, 0.5), 0 8px 20px rgba(0, 0, 0, 0.3);
+  }
 }

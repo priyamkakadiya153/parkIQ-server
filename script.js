@@ -2,16 +2,18 @@
 const preloaderEl = document.getElementById("preloader");
 const totalEl = document.getElementById("total");
 const availableEl = document.getElementById("available");
+const availableCardEl = document.getElementById("available-card"); // For 'FULL' status
 const occupiedEl = document.getElementById("occupied");
 const logListEl = document.getElementById("status-log-list");
-const gateStatusEl = document.getElementById("gate-status-indicator"); // <--- NEW
-const gateStatusTextEl = document.getElementById("gate-status-text");   // <--- NEW
+const gateStatusEl = document.getElementById("gate-status-indicator");
+const gateStatusTextEl = document.getElementById("gate-status-text");
 
 // --- Preloader Logic ---
 let isDataLoaded = false;
 let isMinTimePassed = false;
 
 function tryHidePreloader() {
+  // This will only run when BOTH the timer is done AND the data is loaded
   if (isDataLoaded && isMinTimePassed) {
     if (preloaderEl) {
       preloaderEl.classList.add("hidden");
@@ -23,9 +25,17 @@ function tryHidePreloader() {
 const wsProtocol = window.location.protocol === "https:" ? "wss://" : "ws://";
 const ws = new WebSocket(`${wsProtocol}${window.location.host}`);
 
-ws.onopen = () => { console.log("Connected to ParkIQ WebSocket server"); };
-ws.onclose = () => { console.log("Disconnected from WebSocket server."); };
-ws.onerror = (error) => { console.error("WebSocket Error:", error); };
+ws.onopen = () => {
+  console.log("Connected to ParkIQ WebSocket server");
+};
+
+ws.onclose = () => {
+  console.log("Disconnected from WebSocket server.");
+};
+
+ws.onerror = (error) => {
+  console.error("WebSocket Error:", error);
+};
 
 // --- Main Data Handler ---
 ws.onmessage = (event) => {
@@ -36,8 +46,16 @@ ws.onmessage = (event) => {
     totalEl.innerText = data.total;
     availableEl.innerText = data.available;
     occupiedEl.innerText = data.occupied;
-    
-    // 2. Update Gate Status <--- NEW
+
+    // 2. 'FULL' Indicator Logic
+    if (data.available === 0) {
+      availableCardEl.classList.add("full");
+      availableEl.innerText = "FULL"; // Change text from '0' to 'FULL'
+    } else {
+      availableCardEl.classList.remove("full");
+    }
+
+    // 3. Update Gate Status
     const gateStatus = data.gate.charAt(0).toUpperCase() + data.gate.slice(1);
     gateStatusTextEl.innerText = `Gate: ${gateStatus}`;
     if (data.gate === "open") {
@@ -48,10 +66,10 @@ ws.onmessage = (event) => {
       gateStatusEl.classList.add("closed");
     }
     
-    // 3. Add a new entry to the log
+    // 4. Add a new entry to the log
     addLogEntry(data);
 
-    // 4. Mark data as loaded and try to hide preloader
+    // 5. Mark data as loaded and try to hide preloader
     isDataLoaded = true;
     tryHidePreloader();
 
@@ -61,17 +79,17 @@ ws.onmessage = (event) => {
 };
 
 // --- Add Log Entry Function ---
-let lastOccupiedCount = -1;
+let lastOccupiedCount = -1; // Track changes
 function addLogEntry(data) {
   if (data.occupied === lastOccupiedCount) {
-    return; // Don't log if only gate status changed
+    return;
   }
   const newLog = document.createElement("li");
   const time = new Date().toLocaleTimeString();
   let message = "";
   if (lastOccupiedCount === -1) {
     message = `[${time}] System online. Status: ${data.occupied} occupied, ${data.available} available.`;
-  } else if (data.occupied > lastOccupiedCount) {
+  } else if (data.occupied > lastOccupdCount) {
     message = `[${time}] 🚗 Car Entered. Occupied slots: ${data.occupied}`;
     newLog.style.color = "#fecaca";
   } else {
@@ -86,8 +104,9 @@ function addLogEntry(data) {
   lastOccupiedCount = data.occupied;
 }
 
-// --- Start 5-Second Minimum Timer ---
+// --- Start Minimum Timer ---
+// UPDATED: This timer now matches the animation time
 setTimeout(() => {
   isMinTimePassed = true;
   tryHidePreloader();
-}, 5000); // 5000ms = 5 seconds
+}, 2000); // 2000ms = 2 seconds
