@@ -110,3 +110,29 @@ setTimeout(() => {
   isMinTimePassed = true;
   tryHidePreloader();
 }, 2000); // 2000ms = 2 seconds
+// ... (all your existing script.js code) ...
+// ... (your setTimeout for the preloader) ...
+
+
+// --- NEW: Display Current Date ---
+// This code runs once when the page loads
+function showDate() {
+  const dateEl = document.getElementById("current-date");
+  if (!dateEl) return; // Stop if the element isn't found
+
+  const today = new Date();
+  
+  // Create formatting options (e.g., "Thursday, November 6, 2025")
+  const options = { 
+    weekday: 'long', 
+    year: 'numeric', 
+    month: 'long', 
+    day: 'numeric' 
+  };
+  
+  // Set the text, using the user's local language and format
+  dateEl.innerText = today.toLocaleDateString(undefined, options);
+}
+
+// Run the function to show the date
+showDate();
