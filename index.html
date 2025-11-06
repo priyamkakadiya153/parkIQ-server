@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ParkIQ Dashboard</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+  
+  <div id="preloader">
+    <div class="preloader-car">🚘</div>
+    <p>Connecting to ParkIQ...</p>
+  </div>
+
+  <header>
+    <h1>🚘 ParkIQ Smart Parking</h1>
+  </header>
+
+  <main>
+    <div class="card total">
+      <h2>Total Slots</h2>
+      <p id="total">--</p>
+    </div>
+    <div class="card available">
+      <h2>Available</h2>
+      <p id="available">--</p>
+    </div>
+    <div class="card occupied">
+      <h2>Occupied</h2>
+      <p id="occupied">--</p>
+    </div>
+  </main>
+
+  <section class="log-container">
+    <h2>Live Activity Log</h2>
+    <ul id="status-log-list">
+      </ul>
+  </section>
+
+  <footer>
+    <p>Made with ❤️ by Priyam | ParkIQ</p>
+  </footer>
+
+  <script src="script.js"></script>
+</body>
+</html>

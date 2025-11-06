@@ -1,0 +1,171 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap');
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  font-family: 'Poppins', sans-serif;
+}
+
+body {
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  color: white;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  text-align: center;
+  padding: 100px 20px 80px 20px; /* Added top padding */
+}
+
+header {
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(12px);
+  width: 100%;
+  padding: 1rem 0;
+  border-bottom: 1px solid rgba(255,255,255,0.2);
+  position: absolute;
+  top: 0;
+}
+
+header h1 {
+  font-size: 2rem;
+  letter-spacing: 1px;
+}
+
+main {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 2rem;
+  width: 90%;
+  max-width: 1000px;
+}
+
+.card {
+  width: 250px;
+  height: 160px;
+  border-radius: 20px;
+  padding: 1.5rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  transition: 0.3s;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+}
+
+.card:hover {
+  transform: translateY(-10px);
+}
+
+.card h2 {
+  margin-bottom: 1rem;
+  font-size: 1.3rem;
+}
+
+.card p {
+  font-size: 2.5rem;
+  font-weight: 600;
+}
+
+.total {
+  border: 2px solid #38bdf8;
+}
+.available {
+  border: 2px solid #22c55e;
+}
+.occupied {
+  border: 2px solid #ef4444;
+}
+
+/* --- NEW STYLES FOR LOG PANEL --- */
+.log-container {
+  width: 90%;
+  max-width: 1000px;
+  margin-top: 3rem;
+  background: rgba(255, 255, 255, 0.1);
+  backdrop-filter: blur(15px);
+  border-radius: 20px;
+  padding: 2rem;
+}
+
+.log-container h2 {
+  font-size: 1.8rem;
+  margin-bottom: 1.5rem;
+}
+
+#status-log-list {
+  list-style: none;
+  max-height: 200px;
+  overflow-y: auto;
+  text-align: left;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+#status-log-list li {
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+#status-log-list li:first-child {
+  /* Highlight the newest entry */
+  background: rgba(59, 130, 246, 0.2);
+  color: #bfdbfe;
+}
+
+footer {
+  position: absolute;
+  bottom: 20px;
+  font-size: 0.9rem;
+  opacity: 0.7;
+}
+/* --- NEW PRELOADER STYLES --- */
+
+#preloader {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 9999;
+  background: linear-gradient(135deg, #0f172a, #1e293b);
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  opacity: 1;
+  visibility: visible;
+  /* This transition is for the fade-out */
+  transition: opacity 0.5s ease-out, visibility 0.5s ease-out;
+}
+
+#preloader.hidden {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.preloader-car {
+  font-size: 4rem;
+  /* This runs our new animation */
+  animation: drive 1.2s infinite ease-in-out;
+}
+
+#preloader p {
+  margin-top: 1rem;
+  font-size: 1.2rem;
+  opacity: 0.8;
+}
+
+/* This is the animation for the car */
+@keyframes drive {
+  0% {
+    transform: translateX(-15px);
+  }
+  50% {
+    transform: translateX(15px) translateY(-3px);
+  }
+  100% {
+    transform: translateX(-15px);
+  }
+}
